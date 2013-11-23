@@ -14,15 +14,15 @@ module one_bit_alu(a,b,c,sum,cout,op1,op2,out,sub);
 		and
 			g3(w1, b, sub2),				//subtract
 			g4(w2, b2, sub),				//
-			g7(w3, c, a),				//carry out
-			g8(w4, c, b3),				//
+			g7(w3, c, a),					//carry out
+			g8(w4, c, b3),					//
 			g9(w5, a, b3),					//
 			g10(w6, a2, c2, b3),			//sum
-			g11(w7, b4, c2, a),			//
-			g12(w8, b4, a2, c),			//
-			g13(w9, c, b3, a),			//
-			g14(d1, a, b),				//and
-			g21(w10, sum, op3, op2),			//multiplexer
+			g11(w7, b4, c2, a),				//
+			g12(w8, b4, a2, c),				//
+			g13(w9, c, b3, a),				//
+			g14(d1, a, b),					//and
+			g21(w10, sum, op3, op2),		//multiplexer
 			g22(w11, d1, op3, op4),			//
 			g23(w12, l1, op1, op2),			//
 			g24(w13, r1, op4, op1);			//
@@ -30,12 +30,12 @@ module one_bit_alu(a,b,c,sum,cout,op1,op2,out,sub);
 			g5(b3, w1, w2),					//subtract
 			g16(cout, w3, w4, w5),			//carry out
 			g17(sum, w6, w7, w8, w9),		//sum
-			g15(r1, a, b),				//or
+			g15(r1, a, b),					//or
 			g26(out, w10, w11, w12, w13);	//multiplexer
 		not
 			g1(sub2, sub),					//subtract
 			g2(b2, b),						//
-			g6(c2, c),					//sum
+			g6(c2, c),						//sum
 			g18(a2, a),						//
 			g19(b4, b3),					//
 			g20(op3, op1),					//mulitplexer
@@ -67,11 +67,11 @@ endmodule
 ******************************************************************
 */
 module thirty_two_alu(a,b,cin,sum,cout,op1,op2,out,sub);
-		input	[32:0]	a,b,op1,op2,sub;
-		output	[32:0]	sum,out;
+		input	[31:0]	a,b,op1,op2,sub;
+		output	[31:0]	sum,out;
 		input	cin;
 		output	cout;
-		wire	c[32:0];
+		wire	c[31:0];
 
 		one_bit_alu	a0	(a[0] ,b[0], cin, sum[0], c[0], op1[0], op2[0], out[0], sub[0]);
 		one_bit_alu	a1	(a[1] ,b[1], c[0], sum[1], c[1], op1[1], op2[1], out[1], sub[1]);
@@ -105,6 +105,11 @@ module thirty_two_alu(a,b,cin,sum,cout,op1,op2,out,sub);
 		one_bit_alu	a29	(a[29] ,b[29], c[28], sum[29], c[29], op1[29], op2[29], out[29], sub[29]);
 		one_bit_alu	a30	(a[30] ,b[30], c[29], sum[30], c[30], op1[30], op2[30], out[30], sub[30]);
 		one_bit_alu	a31	(a[31] ,b[31], c[30], sum[31], cout, op1[31], op2[31], out[31], sub[31]);
+		nor
+			ng(zero, out[0], out[1], out[2], out[3], out[4], out[5], out[6], out[7], out[8], out[9], out[10], out[11], out[12], out[13], out[14], out[15], out[16], out[17], out[18], out[19], out[20], out[21], out[22], out[23], out[24], out[25], out[26], out[27], out[28], out[29], out[30], out[31]);
+		xor
+			xg1(overflow, cin, cout),
+			xg2(less, overflow, out[31]
 endmodule
 /*
 ******************************************************************
@@ -113,18 +118,18 @@ endmodule
 */
 // **Test Bench** //
 module testbench();
-		wire[32:0]	a,b,sum,op1,op2,out,sub;
+		wire[31:0]	a,b,sum,op1,op2,out,sub;
 		wire	cin,cout;
 			testALU	test	(a,b,cin,sum,cout,op1,op2,out,sub);
 			thirty_two_alu	alu	(a,b,cin,sum,cout,op1,op2,out,sub);
 endmodule
 // **Test ALU** //
 module testALU(a,b,cin,sum,cout,op1,op2,out,sub);
-		input[32:0]	sum,out;
+		input[31:0]	sum,out;
 		input	cout;
-		output[32:0]	a,b,op1,op2,sub;
+		output[31:0]	a,b,op1,op2,sub;
 		output	cin;
-		reg[32:0]	a,b,op1,op2,sub;
+		reg[31:0]	a,b,op1,op2,sub;
 		reg	cin;
 // ***********Simulation*********** //
 	initial
@@ -134,7 +139,6 @@ module testALU(a,b,cin,sum,cout,op1,op2,out,sub);
 			#10	a=0; b=0; cin=0; op1=0; op2=0; sub=0;
 			#10	a=40;
 			#10	b=10;
-			#10	sub=1;
 			#10 op1=1;
 			#10
 			$display($time,, "a=%d, b=%d, c=%b, op1=%d, op2=%d, sub=%d, cout=%b, sum=%d, out=%d" ,a,b,cin,op1,op2,sub,cout,sum,out);
