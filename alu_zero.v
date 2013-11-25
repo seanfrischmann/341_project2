@@ -23,7 +23,7 @@ module one_bit_alu(a,b,c,sum,cout,op1,op2,out,sub,less);
 			g23(w12, less, op1, op2),		//
 			g24(w13, r1, op3, op2);			//
 		xor
-			xg1(w6, a, b),					//sum
+			xg1(w6, a, b3),					//sum
 			xg2(sum, w6, c);				//
 		or
 			g5(b3, w1, w2),					//subtract
